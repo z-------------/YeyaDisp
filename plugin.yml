@@ -1,11 +1,12 @@
 main: yy.zacharyguard.yeyadisp.Main
 name: YeyaDisp
-version: 0.0.0
+version: 0.0.1
 author: Zachary Guard
 description: Gourd.
 commands:
   yeyadisp:
+    aliases: [ydisp]
     description: Make a dispenser infinite.
-    usage: /yeyadisp
+    usage: /ydisp
     permission: bukkit.op
     permission-message: Only ops (those with bukkit.op permission) are authorized to use YeyaDisp.
