@@ -56,18 +56,26 @@ public class Main extends JavaPlugin {
         		Container dispenser = (Container) targetBlock.getState();
         		Location dispenserLocation = dispenser.getLocation();
         		Vector dispenserLocationVector = dispenserLocation.toVector();
-        		if (!yDispVectors.contains(dispenserLocationVector)) {
-        			yDispVectors.add(dispenserLocationVector);
-            		replenishDispenser(dispenserLocation);
-            		player.sendMessage("Successfully created a YeyaDisp.");
+        		if (args.length > 0 && args[0].equalsIgnoreCase("disable")) {
+        			int yDispIndex = yDispVectors.indexOf(dispenserLocationVector);
+        			if (yDispIndex != -1) {
+            			yDispVectors.remove(yDispIndex);
+                		player.sendMessage("Successfully removed YeyaDisp abilities from that dispenser.");
+            		} else {
+            			player.sendMessage("No YeyaDisp exists here.");
+            		}
         		} else {
-        			player.sendMessage("That YeyaDisp already exists.");
+        			if (!yDispVectors.contains(dispenserLocationVector)) {
+            			yDispVectors.add(dispenserLocationVector);
+                		replenishDispenser(dispenserLocation);
+                		player.sendMessage("Successfully created a YeyaDisp.");
+            		} else {
+            			player.sendMessage("That YeyaDisp already exists.");
+            		}
         		}
         	} else {
         		player.sendMessage("That block is not a dispenser.");
         	}
-        	
-        	return true;
         }
         
         return false;
