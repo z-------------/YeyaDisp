@@ -25,7 +25,7 @@ public class BlockDispenseEventHandler implements Listener {
     	if (block.getType() == Material.DISPENSER) {
     		Container dispenser = (Container) block.getState();
     		Location dispenserLocation = dispenser.getLocation();
-    		if (plugin.yDispLocations.contains(dispenserLocation)) {
+    		if (plugin.yDispVectors.contains(dispenserLocation.toVector())) {
     			plugin.replenishDispenser(dispenserLocation);
     		}
     	}

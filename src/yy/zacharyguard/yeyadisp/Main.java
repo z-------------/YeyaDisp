@@ -1,6 +1,5 @@
 package yy.zacharyguard.yeyadisp;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -17,23 +16,29 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 public class Main extends JavaPlugin {
 	
 	Logger logger = getLogger();
 	Server server = getServer();
 	
-	List<Location> yDispLocations = new ArrayList<Location>();
+	List yDispVectors;
 	
 	@Override
     public void onEnable() {
-		logger.info("YeyaDisp ready.");
 		Bukkit.getPluginManager().registerEvents(new BlockDispenseEventHandler(this), this); // register EventHandlers
+		
+		yDispVectors = this.getConfig().getList("yeyadisp_coords");
+		logger.info("YeyaDisp ready.");
     }
    
     @Override
     public void onDisable() {
-       
+    	logger.info("Saving YeyaDisps to config...");
+    	this.getConfig().set("yeyadisp_coords", yDispVectors);
+    	this.saveConfig();
+    	logger.info("YeyaDisps saved.");
     }
     
     @Override
@@ -46,15 +51,20 @@ public class Main extends JavaPlugin {
         		&& sender instanceof Player
         		) {
         	LivingEntity player = (LivingEntity) sender;
-        	Block targetBlock = player.getTargetBlock(null, 5);
+        	Block targetBlock = player.getTargetBlock(null, this.getConfig().getInt("target_block_max_distance"));
         	if (targetBlock.getType() == Material.DISPENSER) {
-        		player.sendMessage("Targeted block is dispenser. Proceeding.");
         		Container dispenser = (Container) targetBlock.getState();
         		Location dispenserLocation = dispenser.getLocation();
-        		yDispLocations.add(dispenserLocation);
-        		replenishDispenser(dispenserLocation);
+        		Vector dispenserLocationVector = dispenserLocation.toVector();
+        		if (!yDispVectors.contains(dispenserLocationVector)) {
+        			yDispVectors.add(dispenserLocationVector);
+            		replenishDispenser(dispenserLocation);
+            		player.sendMessage("Successfully created a YeyaDisp.");
+        		} else {
+        			player.sendMessage("That YeyaDisp already exists.");
+        		}
         	} else {
-        		player.sendMessage("Targeted block is not dispenser. Aborting.");
+        		player.sendMessage("That block is not a dispenser.");
         	}
         	
         	return true;
