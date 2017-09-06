@@ -1,12 +1,16 @@
 package yy.zacharyguard.yeyadisp;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.command.Command;
@@ -16,27 +20,52 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
 
 public class Main extends JavaPlugin {
 	
 	Logger logger = getLogger();
 	Server server = getServer();
 	
-	List yDispVectors;
+	List<Location> yDispLocations = new ArrayList<Location>();
 	
 	@Override
     public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(new BlockDispenseEventHandler(this), this); // register EventHandlers
 		
-		yDispVectors = this.getConfig().getList("yeyadisp_coords");
+		@SuppressWarnings("rawtypes")
+		List configYDispCoords = this.getConfig().getList("yeyadisp_coords");
+		logger.info(Integer.toString(configYDispCoords.size()));
+		for (int i = 0; i < configYDispCoords.size(); i++) {
+			@SuppressWarnings("rawtypes")
+			Map info = (Map) configYDispCoords.get(i);
+			yDispLocations.add(new Location(
+					(World) server.getWorld((String) info.get("world_name")),
+					(double) info.get("x"),
+					(double) info.get("y"),
+					(double) info.get("z")
+					));
+		}
+		
 		logger.info("YeyaDisp ready.");
     }
    
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
     public void onDisable() {
     	logger.info("Saving YeyaDisps to config...");
-    	this.getConfig().set("yeyadisp_coords", yDispVectors);
+    	
+    	List<Map> yDispCoords = new ArrayList<Map>();
+    	for (int i = 0; i < yDispLocations.size(); i++) {
+    		Location location = yDispLocations.get(i);
+    		HashMap info = new HashMap();
+    		info.put("world_name", location.getWorld().getName());
+    		info.put("x", location.getX());
+    		info.put("y", location.getY());
+    		info.put("z", location.getZ());
+    		yDispCoords.add(info);
+    	}
+    	
+    	this.getConfig().set("yeyadisp_coords", yDispCoords);
     	this.saveConfig();
     	logger.info("YeyaDisps saved.");
     }
@@ -55,18 +84,17 @@ public class Main extends JavaPlugin {
         	if (targetBlock.getType() == Material.DISPENSER) {
         		Container dispenser = (Container) targetBlock.getState();
         		Location dispenserLocation = dispenser.getLocation();
-        		Vector dispenserLocationVector = dispenserLocation.toVector();
         		if (args.length > 0 && args[0].equalsIgnoreCase("disable")) {
-        			int yDispIndex = yDispVectors.indexOf(dispenserLocationVector);
+        			int yDispIndex = yDispLocations.indexOf(dispenserLocation);
         			if (yDispIndex != -1) {
-            			yDispVectors.remove(yDispIndex);
+            			yDispLocations.remove(yDispIndex);
                 		player.sendMessage("Successfully removed YeyaDisp abilities from that dispenser.");
             		} else {
             			player.sendMessage("No YeyaDisp exists here.");
             		}
         		} else {
-        			if (!yDispVectors.contains(dispenserLocationVector)) {
-            			yDispVectors.add(dispenserLocationVector);
+        			if (!yDispLocations.contains(dispenserLocation)) {
+            			yDispLocations.add(dispenserLocation);
                 		replenishDispenser(dispenserLocation);
                 		player.sendMessage("Successfully created a YeyaDisp.");
             		} else {
