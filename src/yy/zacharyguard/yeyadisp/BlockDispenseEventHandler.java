@@ -9,6 +9,8 @@ import org.bukkit.block.Container;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class BlockDispenseEventHandler implements Listener {
 	
@@ -24,9 +26,11 @@ public class BlockDispenseEventHandler implements Listener {
     	Block block = event.getBlock();
     	if (block.getType() == Material.DISPENSER) {
     		Container dispenser = (Container) block.getState();
+    		Inventory inventory = dispenser.getInventory();
     		Location dispenserLocation = dispenser.getLocation();
+        	ItemStack itemDispensed = event.getItem();
     		if (plugin.yDispLocations.contains(dispenserLocation)) {
-    			plugin.replenishDispenser(dispenserLocation);
+    			plugin.replenishDispenser(inventory, itemDispensed);
     		}
     	}
     }

@@ -95,7 +95,6 @@ public class Main extends JavaPlugin {
         		} else {
         			if (!yDispLocations.contains(dispenserLocation)) {
             			yDispLocations.add(dispenserLocation);
-                		replenishDispenser(dispenserLocation);
                 		player.sendMessage("Successfully created a YeyaDisp.");
             		} else {
             			player.sendMessage("That YeyaDisp already exists.");
@@ -106,18 +105,16 @@ public class Main extends JavaPlugin {
         	}
         }
         
-        return false;
+        return true;
     }
     
-    public boolean replenishDispenser(Location location) {
-    	Inventory inventory = ((Container) location.getBlock().getState()).getInventory();
-		for (int i = 0; i < 9; i++) {
-			ItemStack itemStack = inventory.getItem(i);
-			if (itemStack != null) {
-				itemStack.setAmount(itemStack.getMaxStackSize());
-				inventory.setItem(i, itemStack);
-			}
-		}
+    public boolean replenishDispenser(Inventory inventory, ItemStack itemDispensed) {
+    	server.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run() {
+                inventory.addItem(itemDispensed);
+            }
+        }, 1L);
 		return true;
     }
 }
