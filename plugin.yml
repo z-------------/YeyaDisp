@@ -1,6 +1,6 @@
 main: yy.zacharyguard.yeyadisp.Main
 name: YeyaDisp
-version: 0.2.2
+version: 0.2.3
 author: Zachary Guard
 description: Gourd.
 commands:

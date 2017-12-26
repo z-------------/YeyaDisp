@@ -30,7 +30,9 @@ public class Main extends JavaPlugin {
 	
 	@Override
     public void onEnable() {
-		Bukkit.getPluginManager().registerEvents(new BlockDispenseEventHandler(this), this); // register EventHandlers
+		/* register EventHandlers */
+		Bukkit.getPluginManager().registerEvents(new BlockDispenseEventHandler(this), this);
+		Bukkit.getPluginManager().registerEvents(new BlockBreakEventHandler(this), this);
 		
 		@SuppressWarnings("rawtypes")
 		List configYDispCoords = this.getConfig().getList("yeyadisp_coords");
