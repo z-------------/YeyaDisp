@@ -13,26 +13,26 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class BlockDispenseEventHandler implements Listener {
-	
-	Main plugin;
-	Server server = Bukkit.getServer();
-	
-	public BlockDispenseEventHandler(Main instance) {
-		plugin = instance;
-	}
-	
-	@EventHandler
-    public void onBlockDispense(BlockDispenseEvent event) {
-    	Block block = event.getBlock();
-    	if (block.getType() == Material.DISPENSER) {
-    		Container dispenser = (Container) block.getState();
-    		Inventory inventory = dispenser.getInventory();
-    		Location dispenserLocation = dispenser.getLocation();
-        	ItemStack itemDispensed = event.getItem();
-    		if (plugin.yDispLocations.contains(dispenserLocation)) {
-    			plugin.replenishDispenser(inventory, itemDispensed);
-    		}
-    	}
+  
+  Main plugin;
+  Server server = Bukkit.getServer();
+  
+  public BlockDispenseEventHandler(Main instance) {
+    plugin = instance;
+  }
+  
+  @EventHandler
+  public void onBlockDispense(BlockDispenseEvent event) {
+    Block block = event.getBlock();
+    if (block.getType() == Material.DISPENSER) {
+      Container dispenser = (Container) block.getState();
+      Inventory inventory = dispenser.getInventory();
+      Location dispenserLocation = dispenser.getLocation();
+        ItemStack itemDispensed = event.getItem();
+      if (plugin.yDispLocations.contains(dispenserLocation)) {
+        plugin.replenishDispenser(inventory, itemDispensed);
+      }
     }
-	
+  }
+  
 }
